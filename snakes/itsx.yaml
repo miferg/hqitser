@@ -1,0 +1,15 @@
+name: itsx
+channels:
+  - defaults
+  - bioconda
+  - conda-forge
+dependencies:
+  - _libgcc_mutex=0.1=main
+  - _openmp_mutex=5.1=1_gnu
+  - hmmer=3.4=h503566f_3
+  - itsx=1.1.3=hdfd78af_1
+  - libgcc=14.2.0=h767d61c_2
+  - libgcc-ng=14.2.0=h69a702a_2
+  - libgomp=14.2.0=h767d61c_2
+  - libstdcxx=14.2.0=h8f9b012_2
+  - perl=5.38.2=0_h5eee18b_perl5
