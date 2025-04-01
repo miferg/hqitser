@@ -14,8 +14,6 @@ Set up and activate a conda environment with snakemake. All dependencies will be
 
 Store all your fasta files in a same directory. Files must end with ".fna". Minimun number of cores is 4.
 
-# usage
-
 Example:
 
 `snakemake --cores 4 --use-conda --config querydir="my_files" outdir="ecmitser_out"`
