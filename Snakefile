@@ -11,15 +11,15 @@ rule all:
     input:
         str(outdir) + "/merged/ecmits.merged.fna",
         str(outdir) + "/clean/ecmits.clean.fna",
+        str(outdir) + "/clean/ecmits.clean.o.fna",
         str(outdir) + "/clean/ecmits.derep.fna",
         str(outdir) + "/itsx_out/itsx_out.positions.txt",
         str(outdir) + "/ecmitser.wits.tsv",
-        str(outdir) + "/itsx_out/ecmitser.wits.fna",
+        str(outdir) + "/ecmitser.wits.fna",
         str(outdir) + "/annot/sh_general_release_dynamic_s_19.02.2025.fasta",
         str(outdir) + "/annot/unite.ndb",
         expand(str(outdir) + "/annot/ac_slice_{slice_num}.fasta", slice_num=range(1, 11)),
-        str(outdir) + "/annot/ecmitser.btout",
-        str(outdir) + "/ecmitser.fna"
+        str(outdir) + "/ecmitser.btout"
 
 rule merge_fna_files:
     input:
@@ -47,11 +47,48 @@ rule clean_sequences:
         python snakes/trim_and_filter.py {input} {params}
         """
 
+rule get_annot_db:
+   # download reference database
+    output:
+        temp(str(outdir) + "/annot/1c8647cd-31f2-44ff-8c77-dbd470e6154c.tgz")
+    params:
+        str(outdir) +'/annot'
+    shell:
+        """
+        wget --directory-prefix={params} https://s3.hpc.ut.ee/plutof-public/original/1c8647cd-31f2-44ff-8c77-dbd470e6154c.tgz
+        """
+
+rule unzip_annot_db:
+   # decompress reference database
+    input:
+        str(outdir) + "/annot/1c8647cd-31f2-44ff-8c77-dbd470e6154c.tgz"
+    output:
+        str(outdir) + "/annot/sh_general_release_dynamic_s_19.02.2025.fasta"
+    params:
+        str(outdir) +'/annot'
+    shell:
+        """
+        tar xzf {input} --directory {params}
+        """
+
+rule  orient_sequences:
+    conda:
+        "snakes/vsearch.yaml"
+    input:
+        str(outdir) + "/clean/ecmits.clean.fna",
+        str(outdir) + "/annot/sh_general_release_dynamic_s_19.02.2025.fasta"
+    output:
+        str(outdir) + "/clean/ecmits.clean.o.fna"
+    shell:
+        """
+        vsearch --orient {input[0]} --db {input[1]} --fastaout {output}
+        """
+
 rule dereplicate:
     conda:
         "snakes/vsearch.yaml"
     input:
-        str(outdir) + "/clean/ecmits.clean.fna"
+        str(outdir) + "/clean/ecmits.clean.o.fna"
     output:
         str(outdir) + "/clean/ecmits.derep.fna",
         str(outdir) + "/clean/ecmits.derep.uc"
@@ -93,36 +130,12 @@ rule  filter_by_its_content:
         str(outdir) + "/clean/ecmits.derep.fna",
         str(outdir) + "/ecmitser.wits.tsv"
     output:
-        str(outdir) + "/itsx_out/ecmitser.wits.fna"
+        str(outdir) + "/ecmitser.wits.fna"
     params:
-        str(outdir) + "/itsx_out/ecmitser"
+        str(outdir) + "/ecmitser"
     shell:
         """
         python snakes/filter_by_its_content.py {input[0]} {input[1]} {params}
-        """
-
-rule get_annot_db:
-   # download reference database
-    output:
-        temp(str(outdir) + "/annot/1c8647cd-31f2-44ff-8c77-dbd470e6154c.tgz")
-    params:
-        str(outdir) +'/annot'
-    shell:
-        """
-        wget --directory-prefix={params} https://s3.hpc.ut.ee/plutof-public/original/1c8647cd-31f2-44ff-8c77-dbd470e6154c.tgz
-        """
-
-rule unzip_annot_db:
-   # decompress reference database
-    input:
-        str(outdir) + "/annot/1c8647cd-31f2-44ff-8c77-dbd470e6154c.tgz"
-    output:
-        str(outdir) + "/annot/sh_general_release_dynamic_s_19.02.2025.fasta"
-    params:
-        str(outdir) +'/annot'
-    shell:
-        """
-        tar xzf {input} --directory {params}
         """
 
 rule build_bl_db:
@@ -143,7 +156,7 @@ rule build_bl_db:
 rule split_fasta:
     # split query fasta to speed up the blast search
     input:
-        str(outdir) + "/itsx_out/ecmitser.wits.fna"
+        str(outdir) + "/ecmitser.wits.fna"
     output:
         expand(str(outdir) + "/annot/ac_slice_{slice_num}.fasta", slice_num=range(1, 11))
     params:
@@ -174,25 +187,12 @@ rule merge_blast:
     input:
         expand(str(outdir) + "/annot/ac_slice_{slice_num}.btout", slice_num=range(1, 11))
     output:
-        str(outdir) + "/annot/ecmitser.btout"
+        str(outdir) + "/ecmitser.btout"
     params:
         str(outdir) + "/annot"
     shell:
         """
         cat {params}/ac_slice_*.btout > {output}
-        """
-
-rule  orient_sequences:
-    conda:
-        "snakes/vsearch.yaml"
-    input:
-        str(outdir) + "/itsx_out/ecmitser.wits.fna",
-        str(outdir) + "/annot/sh_general_release_dynamic_s_19.02.2025.fasta"
-    output:
-        str(outdir) + "/ecmitser.fna"
-    shell:
-        """
-        vsearch --orient {input[0]} --db {input[1]} --fastaout {output}
         """
 
 # END
