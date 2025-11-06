@@ -7,7 +7,7 @@
 `ecmitser` is a Snakemake pipeline for the processing and taxonomic annotation of fungal Internal Transcribed Spacer (ITS) sequences.
 
 The pipeline takes one or more FASTA files as input and performs a full workflow, including:
-* File merging and seequence quality filtering
+* File merging and sequence quality filtering
 * Sequence orientation and dereplication
 * ITS region extraction using **ITSx**
 * Taxonomic annotation using **BLASTn** against the **UNITE database**
