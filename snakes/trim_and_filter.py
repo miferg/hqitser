@@ -9,8 +9,7 @@ try:
     
 except:
     print("""
-Recortar nucleotidos de cada secuencia y descartar secuencias con cierto contenido de bases sin definir.
-Ejemplo:
+Usage:
 trim_and_filter.py <infile.fna> <oufile_prefix>
     """)
     sys.exit()
