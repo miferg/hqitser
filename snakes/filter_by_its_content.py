@@ -11,9 +11,7 @@ try:
     
 except:
     print("""
-Tomar un archivo fasta y una tabla de salida de ITSx y conservar secuencias en las que se
-ha detectado el ITS1 e ITS2.
-Ejemplo:
+Usage:
 filter_by_its_content.py <infile.fna> <itsx.wits.tsv> <oufile_prefix>
     """)
     sys.exit()
