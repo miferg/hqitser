@@ -26,19 +26,14 @@ The pipeline follows these main processing steps:
 
 `ecmitser` is built on Snakemake and uses Conda to manage all software dependencies automatically.
 
-1.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/miferg/ecmitser.git
-    cd ecmitser
-    ```
 
-2.  **Create the Snakemake environment:**
+1.  **Create the Snakemake environment:**
     
     ```bash
     conda create -c conda-forge -c bioconda -n ecmitser-env snakemake
     ```
 
-3.  **Activate the environment:**
+2.  **Activate the environment:**
     ```bash
     conda activate ecmitser-env
     ```
