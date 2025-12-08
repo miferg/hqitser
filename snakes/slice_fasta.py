@@ -7,8 +7,7 @@ try:
     outfilepref = sys.argv[2]
 except:
     print("""
-Repartir secuencias de un multifasta en 10 rebanadas.
-Ejemplo:
+Usage:
 slice_fasta.py <infile.fastq.gz> <outfile_prefix>
     """)
     sys.exit()
