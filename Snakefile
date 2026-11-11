@@ -9,23 +9,23 @@ LOCBASE = [x.split('.fna')[0] for x in os.listdir(querydir) if x.endswith('.fna'
 
 rule all:
     input:
-        str(outdir) + "/merged/ecmits.merged.fna",
-        str(outdir) + "/clean/ecmits.clean.fna",
-        str(outdir) + "/clean/ecmits.clean.o.fna",
-        str(outdir) + "/clean/ecmits.derep.fna",
+        str(outdir) + "/merged/hqits.merged.fna",
+        str(outdir) + "/clean/hqits.clean.fna",
+        str(outdir) + "/clean/hqits.clean.o.fna",
+        str(outdir) + "/clean/hqits.derep.fna",
         str(outdir) + "/itsx_out/itsx_out.positions.txt",
-        str(outdir) + "/ecmitser.wits.tsv",
-        str(outdir) + "/ecmitser.wits.fna",
+        str(outdir) + "/hqitser.wits.tsv",
+        str(outdir) + "/hqitser.wits.fna",
         str(outdir) + "/annot/sh_general_release_dynamic_s_19.02.2025.fasta",
         str(outdir) + "/annot/unite.ndb",
         expand(str(outdir) + "/annot/ac_slice_{slice_num}.fasta", slice_num=range(1, 11)),
-        str(outdir) + "/ecmitser.btout"
+        str(outdir) + "/hqitser.btout"
 
 rule merge_fna_files:
     input:
         expand(str(querydir) + "/{lbase}.fna", lbase=LOCBASE)
     output:
-        str(outdir) + "/merged/ecmits.merged.fna"
+        str(outdir) + "/merged/hqits.merged.fna"
     params:
         str(querydir) +"/*.fna"
     shell:
@@ -35,13 +35,13 @@ rule merge_fna_files:
 
 rule clean_sequences:
     conda:
-        "snakes/ecmitser_pylibs.yaml"
+        "snakes/hqitser_pylibs.yaml"
     input:
-        str(outdir) + "/merged/ecmits.merged.fna"
+        str(outdir) + "/merged/hqits.merged.fna"
     output:
-        str(outdir) + "/clean/ecmits.clean.fna"
+        str(outdir) + "/clean/hqits.clean.fna"
     params:
-        str(outdir) + "/clean/ecmits"
+        str(outdir) + "/clean/hqits"
     shell:
         """
         python snakes/trim_and_filter.py {input} {params}
@@ -75,10 +75,10 @@ rule  orient_sequences:
     conda:
         "snakes/vsearch.yaml"
     input:
-        str(outdir) + "/clean/ecmits.clean.fna",
+        str(outdir) + "/clean/hqits.clean.fna",
         str(outdir) + "/annot/sh_general_release_dynamic_s_19.02.2025.fasta"
     output:
-        str(outdir) + "/clean/ecmits.clean.o.fna"
+        str(outdir) + "/clean/hqits.clean.o.fna"
     shell:
         """
         vsearch --orient {input[0]} --db {input[1]} --fastaout {output}
@@ -88,12 +88,12 @@ rule dereplicate:
     conda:
         "snakes/vsearch.yaml"
     input:
-        str(outdir) + "/clean/ecmits.clean.o.fna"
+        str(outdir) + "/clean/hqits.clean.o.fna"
     output:
-        str(outdir) + "/clean/ecmits.derep.fna",
-        str(outdir) + "/clean/ecmits.derep.uc"
+        str(outdir) + "/clean/hqits.derep.fna",
+        str(outdir) + "/clean/hqits.derep.uc"
     params:
-        str(outdir) + "/clean/ecmits"
+        str(outdir) + "/clean/hqits"
     shell:
         """
         vsearch --derep_fulllength {input} --output {output[0]} --uc {output[1]}
@@ -103,7 +103,7 @@ rule search_itsx:
     conda:
         "snakes/itsx.yaml"
     input:
-        str(outdir) + "/clean/ecmits.derep.fna"
+        str(outdir) + "/clean/hqits.derep.fna"
     output:
         str(outdir) + "/itsx_out/itsx_out.positions.txt"
     params:
@@ -117,7 +117,7 @@ rule filter_itsx_table:
     input:
         str(outdir) + "/itsx_out/itsx_out.positions.txt"
     output:
-        str(outdir) + "/ecmitser.wits.tsv" # with ITS
+        str(outdir) + "/hqitser.wits.tsv" # with ITS
     shell:
         """
         awk -F"\t" '{{print $1"\t"$4"\t"$6}}' {input} | grep -v "Not found" > {output}
@@ -125,14 +125,14 @@ rule filter_itsx_table:
 
 rule  filter_by_its_content:
     conda:
-        "snakes/ecmitser_pylibs.yaml"
+        "snakes/hqitser_pylibs.yaml"
     input:
-        str(outdir) + "/clean/ecmits.derep.fna",
-        str(outdir) + "/ecmitser.wits.tsv"
+        str(outdir) + "/clean/hqits.derep.fna",
+        str(outdir) + "/hqitser.wits.tsv"
     output:
-        str(outdir) + "/ecmitser.wits.fna"
+        str(outdir) + "/hqitser.wits.fna"
     params:
-        str(outdir) + "/ecmitser"
+        str(outdir) + "/hqitser"
     shell:
         """
         python snakes/filter_by_its_content.py {input[0]} {input[1]} {params}
@@ -156,7 +156,7 @@ rule build_bl_db:
 rule split_fasta:
     # split query fasta to speed up the blast search
     input:
-        str(outdir) + "/ecmitser.wits.fna"
+        str(outdir) + "/hqitser.wits.fna"
     output:
         expand(str(outdir) + "/annot/ac_slice_{slice_num}.fasta", slice_num=range(1, 11))
     params:
@@ -187,7 +187,7 @@ rule merge_blast:
     input:
         expand(str(outdir) + "/annot/ac_slice_{slice_num}.btout", slice_num=range(1, 11))
     output:
-        str(outdir) + "/ecmitser.btout"
+        str(outdir) + "/hqitser.btout"
     params:
         str(outdir) + "/annot"
     shell:
