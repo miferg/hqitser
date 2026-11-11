@@ -1,10 +1,10 @@
-# ecmitser
+# hqitser
 
 [![Snakemake](https://img.shields.io/badge/snakemake-≥7.0-brightgreen.svg)](https://snakemake.github.io)
 [![Conda](https://img.shields.io/badge/conda-managed-green.svg)](https://docs.conda.io/en/latest/miniconda.html)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-`ecmitser` is a Snakemake pipeline for the processing and taxonomic annotation of fungal Internal Transcribed Spacer (ITS) sequences.
+`hqitser` is a Snakemake pipeline for the processing and taxonomic annotation of fungal Internal Transcribed Spacer (ITS) sequences.
 
 The pipeline takes one or more FASTA files as input and performs a full workflow, including:
 * File merging and sequence quality filtering
@@ -24,23 +24,23 @@ The pipeline follows these main processing steps:
 
 ## 🛠️ Installation
 
-`ecmitser` is built on Snakemake and uses Conda to manage all software dependencies automatically.
+`hqitser` is built on Snakemake and uses Conda to manage all software dependencies automatically.
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/miferg/ecmitser.git
-    cd ecmitser
+    git clone https://github.com/miferg/hqitser.git
+    cd hqitser
     ```
 
 2.  **Create the Snakemake environment:**
     
     ```bash
-    conda create -c conda-forge -c bioconda -n ecmitser-env snakemake
+    conda create -c conda-forge -c bioconda -n hqitser-env snakemake
     ```
 
 3.  **Activate the environment:**
     ```bash
-    conda activate ecmitser-env
+    conda activate hqitser-env
     ```
 
 All other dependencies (like `vsearch`, `ITSx`, `blast`, and Python libraries) will be automatically downloaded and installed by Snakemake into isolated environments when you first run the pipeline.
@@ -49,12 +49,12 @@ All other dependencies (like `vsearch`, `ITSx`, `blast`, and Python libraries) w
 
 ## 🚀 Usage
 
-Run the pipeline from within the cloned `ecmitser` directory.
+Run the pipeline from within the cloned `hqitser` directory.
 
 ### Example Command
 
 ```bash
-snakemake --cores 4 --use-conda --config querydir="path/to/my_files" outdir="path/to/ecmitser_out"
+snakemake --cores 4 --use-conda --config querydir="path/to/my_files" outdir="path/to/hqitser_out"
 ```
 
 ### Configuration Parameters
@@ -91,24 +91,24 @@ The pipeline will create the specified `outdir` and organize all results into su
 ### Directory Structure
 
 ```
-ecmitser_out/
+hqitser_out/
 ├── annot/            # Downloaded UNITE DB, BLAST database, and split query files
 ├── clean/            # Cleaned, oriented, and dereplicated sequences
 ├── itsx_out/         # Raw output files from ITSx
 ├── merged/           # The single merged input FASTA file
 |
-├── ecmitser.btout    # <-- 1. FINAL BLAST annotation table
-├── ecmitser.wits.fna # <-- 2. FASTA file of dereplicated sequences with an ITS region
-└── ecmitser.wits.tsv # <-- 3. Table of sequences and their ITSx-detected positions
+├── hqitser.btout    # <-- 1. FINAL BLAST annotation table
+├── hqitser.wits.fna # <-- 2. FASTA file of dereplicated sequences with an ITS region
+└── hqitser.wits.tsv # <-- 3. Table of sequences and their ITSx-detected positions
 ```
 
 ### Key Output Files
 
-1. `ecmitser.btout`: This is the primary result. It is a merged, tab-separated file (BLAST outfmt 6) containing the top 10 BLAST hits for each query sequence against the UNITE database.
+1. `hqitser.btout`: This is the primary result. It is a merged, tab-separated file (BLAST outfmt 6) containing the top 10 BLAST hits for each query sequence against the UNITE database.
 
-2. `ecmitser.wits.fna`: The final, filtered set of unique sequences that were confirmed to contain an ITS region. These are the sequences used as queries in the BLAST search.
+2. `hqitser.wits.fna`: The final, filtered set of unique sequences that were confirmed to contain an ITS region. These are the sequences used as queries in the BLAST search.
 
-3. `ecmitser.wits.tsv`: A simple 3-column table (`SeqID`, `ITSx_Start`, `ITSx_Stop`) for sequences that passed ITSx filtering.
+3. `hqitser.wits.tsv`: A simple 3-column table (`SeqID`, `ITSx_Start`, `ITSx_Stop`) for sequences that passed ITSx filtering.
 
 ---
 
@@ -134,7 +134,7 @@ The Snakefile executes the following steps:
 
    - `blastn` is run for each chunk against the UNITE database.
 
-   - The 10 resulting output files are merged into the final `ecmitser.btout`.
+   - The 10 resulting output files are merged into the final `hqitser.btout`.
 
 ---
 
