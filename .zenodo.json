@@ -1,0 +1,12 @@
+{
+  "title": "hqitser",
+  "description": "A bioinformatic pipeline for the processing and taxonomic annotation of fungal Internal Transcribed Spacer (ITS) sequences.",
+  "upload_type": "software",
+  "creators": [
+    {
+      "name": "Romero-Gutiérrez, M. F.",
+      "affiliation": "Instituto de Biología, Universidad Nacional Autónoma de México",
+      "orcid": "0000-0002-3799-717X"
+    }
+  ]
+}
