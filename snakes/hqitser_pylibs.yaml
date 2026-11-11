@@ -1,4 +1,4 @@
-name: ecmitser_pylibs
+name: hqitser_pylibs
 channels:
   - anaconda
   - defaults
